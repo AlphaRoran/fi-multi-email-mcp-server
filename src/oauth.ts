@@ -2,6 +2,11 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { google } from "googleapis";
+import {
+  createBrokerSessionState,
+  verifyBrokerCallbackEnvelope,
+  type BrokerCallbackEnvelope
+} from "./brokerProtocol.js";
 import { accountId, type StoredAccount, type TokenStore } from "./storage.js";
 
 const host = process.env.EMAIL_MCP_OAUTH_HOST || "127.0.0.1";
@@ -41,10 +46,9 @@ export class OAuthManager {
   constructor(private readonly store: TokenStore) {}
 
   async startGmail(options: OAuthStartOptions = {}): Promise<OAuthStartResult> {
-    const client = makeGoogleOAuthClient();
     const state = this.createPending("gmail");
     await this.ensureServer();
-    const authUrl = client.generateAuthUrl({
+    const authUrl = brokerAuthUrl("gmail") || makeGoogleOAuthClient().generateAuthUrl({
       access_type: "offline",
       prompt: "consent",
       scope: gmailScopes,
@@ -62,20 +66,10 @@ export class OAuthManager {
   }
 
   async startOutlook(options: OAuthStartOptions = {}): Promise<OAuthStartResult> {
-    const clientId = requiredEnv("MICROSOFT_CLIENT_ID");
-    const tenant = process.env.MICROSOFT_TENANT_ID || "common";
     const state = this.createPending("outlook");
     await this.ensureServer();
 
-    const params = new URLSearchParams({
-      client_id: clientId,
-      response_type: "code",
-      redirect_uri: redirectUri,
-      response_mode: "query",
-      scope: outlookScopes.join(" "),
-      state
-    });
-    const authUrl = `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/authorize?${params.toString()}`;
+    const authUrl = brokerAuthUrl("outlook") || directOutlookAuthUrl(state);
     const openedBrowser = await openBrowserIfRequested(authUrl, options.openBrowser);
 
     return {
@@ -124,6 +118,13 @@ export class OAuthManager {
       return;
     }
 
+    if (req.method === "POST") {
+      const account = await this.finishBrokerCallback(req);
+      res.writeHead(200, { "content-type": "text/html" });
+      res.end(`<h1>Email account connected</h1><p>${escapeHtml(account.email)} is ready. You can close this window.</p>`);
+      return;
+    }
+
     const error = url.searchParams.get("error");
     if (error) {
       throw new Error(error);
@@ -144,6 +145,24 @@ export class OAuthManager {
     const account = pending.provider === "gmail" ? await this.finishGmail(code) : await this.finishOutlook(code);
     res.writeHead(200, { "content-type": "text/html" });
     res.end(`<h1>Email account connected</h1><p>${escapeHtml(account.email)} is ready.</p>`);
+  }
+
+  private async finishBrokerCallback(req: IncomingMessage): Promise<StoredAccount> {
+    const publicKeyPem = process.env.EMAIL_MCP_BROKER_PUBLIC_KEY?.replaceAll("\\n", "\n");
+    const sharedSecret = process.env.EMAIL_MCP_BROKER_SHARED_SECRET;
+    if (!publicKeyPem && !sharedSecret) {
+      throw new Error("EMAIL_MCP_BROKER_PUBLIC_KEY or EMAIL_MCP_BROKER_SHARED_SECRET is required for broker callbacks");
+    }
+    const body = await readBrokerCallbackBody(req);
+    const account = verifyBrokerCallbackEnvelope(body, { publicKeyPem, sharedSecret });
+    return this.store.upsert({
+      id: account.id,
+      provider: account.provider,
+      email: account.email,
+      displayName: account.displayName,
+      scopes: account.scopes,
+      tokens: account.tokens
+    });
   }
 
   private async finishGmail(code: string): Promise<StoredAccount> {
@@ -215,6 +234,30 @@ export function makeGoogleOAuthClient() {
   return new google.auth.OAuth2(requiredEnv("GOOGLE_CLIENT_ID"), requiredEnv("GOOGLE_CLIENT_SECRET"), redirectUri);
 }
 
+function brokerAuthUrl(provider: "gmail" | "outlook"): string | undefined {
+  const baseUrl = process.env.EMAIL_MCP_AUTH_BASE_URL?.replace(/\/$/, "");
+  if (!baseUrl) {
+    return undefined;
+  }
+  const brokerState = createBrokerSessionState(provider, redirectUri, process.env.EMAIL_MCP_BROKER_SHARED_SECRET);
+  const path = provider === "gmail" ? "/auth/gmail/start" : "/auth/outlook/start";
+  return `${baseUrl}${path}?${new URLSearchParams({ state: brokerState }).toString()}`;
+}
+
+function directOutlookAuthUrl(state: string): string {
+  const clientId = requiredEnv("MICROSOFT_CLIENT_ID");
+  const tenant = process.env.MICROSOFT_TENANT_ID || "common";
+  const params = new URLSearchParams({
+    client_id: clientId,
+    response_type: "code",
+    redirect_uri: redirectUri,
+    response_mode: "query",
+    scope: outlookScopes.join(" "),
+    state
+  });
+  return `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/authorize?${params.toString()}`;
+}
+
 export async function refreshOutlookToken(account: StoredAccount, store: TokenStore): Promise<string> {
   const refreshToken = account.tokens.refresh_token;
   if (typeof refreshToken !== "string") {
@@ -274,6 +317,27 @@ function requiredEnv(name: string): string {
     throw new Error(`${name} is required`);
   }
   return value;
+}
+
+async function readBrokerCallbackBody(req: IncomingMessage): Promise<BrokerCallbackEnvelope> {
+  const raw = await readBody(req);
+  const contentType = req.headers["content-type"] || "";
+  if (contentType.includes("application/x-www-form-urlencoded")) {
+    const envelope = new URLSearchParams(raw).get("envelope");
+    if (!envelope) {
+      throw new Error("Broker callback form is missing envelope");
+    }
+    return JSON.parse(envelope) as BrokerCallbackEnvelope;
+  }
+  return JSON.parse(raw) as BrokerCallbackEnvelope;
+}
+
+async function readBody(req: IncomingMessage): Promise<string> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks).toString("utf8");
 }
 
 async function openBrowserIfRequested(url: string, openBrowser = true): Promise<boolean> {

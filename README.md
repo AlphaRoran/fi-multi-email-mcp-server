@@ -12,7 +12,7 @@ After a client downloads the repo, they can run the MCP server with normal Node.
 
 However, Gmail and Outlook still require an OAuth application to exist. There are two ways to handle that:
 
-- Recommended client-friendly path: you create and verify the Google/Microsoft OAuth apps once, then provide those app values to the client through a private `.env`, installer, deployment secret, or managed hosting environment.
+- Recommended client-friendly path: run the hosted OAuth broker so Google/Microsoft OAuth secrets stay on your server. Clients receive only the broker URL and public verification key.
 - Self-hosted path: the client creates their own Google/Microsoft OAuth apps and fills in `.env`.
 
 Do not commit production OAuth secrets or refresh tokens to GitHub. Runtime mailbox tokens stay outside the repo in `~/.fender-industries/email-mcp/tokens.json`.
@@ -28,6 +28,7 @@ Do not commit production OAuth secrets or refresh tokens to GitHub. Runtime mail
 ## Setup
 
 For the provider setup walkthrough, see [OAUTH_SETUP.md](./OAUTH_SETUP.md).
+For the hosted broker architecture, see [docs/HOSTED_OAUTH_BROKER.md](./docs/HOSTED_OAUTH_BROKER.md).
 For client installation, see [docs/CLIENT_INSTALL.md](./docs/CLIENT_INSTALL.md).
 For Google verification prep, see [docs/GOOGLE_VERIFICATION_SCOPE_JUSTIFICATIONS.md](./docs/GOOGLE_VERIFICATION_SCOPE_JUSTIFICATIONS.md).
 
@@ -115,6 +116,7 @@ Outlook:
 ## Launch Docs
 
 - [Client install guide](./docs/CLIENT_INSTALL.md)
+- [Hosted OAuth broker](./docs/HOSTED_OAUTH_BROKER.md)
 - [Google verification scope justifications](./docs/GOOGLE_VERIFICATION_SCOPE_JUSTIFICATIONS.md)
 - [Privacy policy draft](./docs/PRIVACY_POLICY_DRAFT.md)
 - [Demo video script](./docs/DEMO_VIDEO_SCRIPT.md)

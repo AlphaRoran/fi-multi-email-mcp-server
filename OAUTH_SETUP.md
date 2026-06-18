@@ -5,10 +5,17 @@ This MCP server supports two onboarding levels:
 1. Local/testing setup: you create OAuth apps and add yourself or a client as a test user.
 2. Client-ready setup: you publish or verify the OAuth apps so outside users can consent without test-user restrictions.
 
-The MCP server uses this local redirect URI:
+Direct local OAuth uses this local redirect URI:
 
 ```text
 http://127.0.0.1:8741/oauth/callback
+```
+
+Hosted broker OAuth uses public broker redirect URIs:
+
+```text
+https://auth.example.com/auth/gmail/callback
+https://auth.example.com/auth/outlook/callback
 ```
 
 ## Google Gmail
@@ -51,10 +58,16 @@ Recommended for local MCP use:
 2. Create OAuth client ID.
 3. Choose Desktop app if you want local installed-app behavior.
 4. Use Web application only if you want to manage an explicit loopback redirect URI.
-5. If using Web application, add:
+5. If using Web application for direct local OAuth, add:
 
 ```text
 http://127.0.0.1:8741/oauth/callback
+```
+
+For hosted broker mode, add the broker callback instead:
+
+```text
+https://auth.example.com/auth/gmail/callback
 ```
 
 6. Copy the client ID and client secret into `.env`:
@@ -107,10 +120,16 @@ Because `gmail.modify` is restricted, Google can require restricted scope verifi
 2. Go to Authentication.
 3. Add a platform.
 4. For this local MCP server, use Mobile and desktop applications or a localhost redirect configuration.
-5. Add:
+5. For direct local OAuth, add:
 
 ```text
 http://127.0.0.1:8741/oauth/callback
+```
+
+For hosted broker mode, add:
+
+```text
+https://auth.example.com/auth/outlook/callback
 ```
 
 6. Enable public client/native flow if you are not using a client secret.
@@ -173,4 +192,3 @@ npm run build
 ```bash
 codex mcp add multi-account-email --env-file /absolute/path/to/.env -- npm --prefix /absolute/path/to/email-mcp-server run mcp:stdio
 ```
-

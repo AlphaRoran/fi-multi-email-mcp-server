@@ -40,6 +40,10 @@ checks.push({
   detail: tokenStoreDetail(store.path)
 });
 
+const brokerReady = Boolean(
+  process.env.EMAIL_MCP_AUTH_BASE_URL &&
+    (process.env.EMAIL_MCP_BROKER_PUBLIC_KEY || process.env.EMAIL_MCP_BROKER_SHARED_SECRET)
+);
 const coreReady = checks
   .filter((check) => check.name === "Node.js" || check.name === "package install")
   .every((check) => check.ok);
@@ -52,10 +56,11 @@ for (const check of checks) {
 }
 
 console.log("");
+console.log(`auth broker: ${brokerReady ? "ready" : "not configured"}`);
 console.log(`provider Gmail: ${gmailReady ? "ready" : "not configured"}`);
 console.log(`provider Outlook: ${outlookReady ? "ready" : "not configured"}`);
 
-if (!coreReady || (!gmailReady && !outlookReady)) {
+if (!coreReady || (!brokerReady && !gmailReady && !outlookReady)) {
   process.exitCode = 1;
 }
 

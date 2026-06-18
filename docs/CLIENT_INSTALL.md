@@ -19,7 +19,16 @@ npm install
 cp .env.example .env
 ```
 
-Fill `.env` with the OAuth app values supplied privately:
+Preferred broker-based installs only need the broker URL and public key:
+
+```bash
+EMAIL_MCP_AUTH_BASE_URL=https://auth.example.com
+EMAIL_MCP_BROKER_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n"
+```
+
+No Google or Microsoft provider secrets are needed on the client machine.
+
+Direct local OAuth fallback can still use provider values:
 
 ```bash
 GOOGLE_CLIENT_ID=
@@ -29,7 +38,7 @@ MICROSOFT_CLIENT_SECRET=
 MICROSOFT_TENANT_ID=common
 ```
 
-Gmail-only installs only need the Google values. Outlook-only installs only need the Microsoft values.
+Gmail-only direct installs only need the Google values. Outlook-only direct installs only need the Microsoft values.
 
 ## Verify Setup
 
@@ -93,4 +102,3 @@ http://127.0.0.1:8741/oauth/callback
 ### MCP host cannot see the server
 
 Run `npm run doctor`, confirm `.env` exists, then restart the MCP host.
-
