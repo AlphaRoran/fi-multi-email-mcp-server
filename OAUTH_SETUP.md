@@ -18,6 +18,8 @@ https://auth.example.com/auth/gmail/callback
 https://auth.example.com/auth/outlook/callback
 ```
 
+If using the temporary Vercel URL before a custom domain, use that Vercel URL in place of `https://auth.example.com`.
+
 ## Google Gmail
 
 ### 1. Create a Google Cloud project

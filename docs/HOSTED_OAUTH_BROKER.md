@@ -70,6 +70,33 @@ MICROSOFT_CLIENT_SECRET=
 MICROSOFT_TENANT_ID=common
 ```
 
+## Vercel Deployment
+
+This repo includes Vercel serverless functions under `api/` and a `vercel.json` rewrite so public broker routes work as:
+
+```text
+/auth/gmail/start
+/auth/gmail/callback
+/auth/outlook/start
+/auth/outlook/callback
+```
+
+On Vercel, set environment variables for Production and Preview:
+
+```bash
+BROKER_PUBLIC_BASE_URL=https://your-vercel-deployment.vercel.app
+BROKER_PRIVATE_KEY=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+MICROSOFT_CLIENT_ID=
+MICROSOFT_CLIENT_SECRET=
+MICROSOFT_TENANT_ID=common
+```
+
+When a custom domain is added, update `BROKER_PUBLIC_BASE_URL` to the custom domain and add the matching provider redirect URIs.
+
 Run:
 
 ```bash
@@ -137,4 +164,3 @@ but it is used only by the browser relay after the broker completes OAuth.
 - Use HTTPS for `BROKER_PUBLIC_BASE_URL`.
 - The broker does not need to retain refresh tokens in this architecture.
 - Production sends and destructive actions should still be approval-gated by the agent workflow.
-
