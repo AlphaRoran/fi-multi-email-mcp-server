@@ -1,0 +1,28 @@
+{
+  "name": "multi-account-email-mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP server for managing multiple Gmail and Outlook accounts from one agent-facing interface.",
+  "scripts": {
+    "build": "tsc",
+    "doctor": "tsx src/doctor.ts",
+    "dev": "tsx src/server.ts",
+    "mcp:stdio": "tsx src/server.ts",
+    "start": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "dotenv": "^17.4.2",
+    "googleapis": "^173.0.0",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.32",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
