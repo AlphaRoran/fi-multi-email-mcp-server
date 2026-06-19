@@ -10,10 +10,18 @@
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/auth/:path*",
-      "destination": "/api/auth/:path*"
+      "src": "/api/health",
+      "dest": "/api/health.ts"
+    },
+    {
+      "src": "/api/auth/(.*)",
+      "dest": "/api/auth/$1.ts"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "/api/auth/$1.ts"
     }
   ]
 }

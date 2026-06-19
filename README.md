@@ -37,12 +37,28 @@ npm install
 cp .env.example .env
 ```
 
-Fill in the OAuth app values once for the providers you want:
+For the client-friendly hosted broker setup, clients only need:
+
+```bash
+EMAIL_MCP_AUTH_BASE_URL=https://email-mcp-server-caleb-fender-s-projects.vercel.app
+EMAIL_MCP_BROKER_PUBLIC_KEY=
+```
+
+Google and Microsoft OAuth secrets stay in the hosted broker environment on Vercel, not on the client machine.
+
+For direct local OAuth fallback, fill in the OAuth app values once for the providers you want:
 
 - Gmail: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
 - Outlook/Microsoft Graph: `MICROSOFT_CLIENT_ID`, optional `MICROSOFT_CLIENT_SECRET`, optional `MICROSOFT_TENANT_ID`
 
-For both providers, configure this redirect URI in the OAuth app:
+For hosted broker mode, configure these redirect URIs in the provider OAuth apps:
+
+```text
+https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/gmail/callback
+https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/outlook/callback
+```
+
+For direct local OAuth fallback, configure this redirect URI in the OAuth app:
 
 ```text
 http://127.0.0.1:8741/oauth/callback
