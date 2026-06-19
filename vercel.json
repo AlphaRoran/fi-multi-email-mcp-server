@@ -2,6 +2,18 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/index.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/privacy.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/terms.ts",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api/health.ts",
       "use": "@vercel/node"
     },
@@ -11,6 +23,18 @@
     }
   ],
   "routes": [
+    {
+      "src": "/",
+      "dest": "/api/index.ts"
+    },
+    {
+      "src": "/privacy",
+      "dest": "/api/privacy.ts"
+    },
+    {
+      "src": "/terms",
+      "dest": "/api/terms.ts"
+    },
     {
       "src": "/api/health",
       "dest": "/api/health.ts"

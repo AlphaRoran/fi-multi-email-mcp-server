@@ -40,7 +40,7 @@ cp .env.example .env
 For the client-friendly hosted broker setup, clients only need:
 
 ```bash
-EMAIL_MCP_AUTH_BASE_URL=https://email-mcp-server-caleb-fender-s-projects.vercel.app
+EMAIL_MCP_AUTH_BASE_URL=https://auth.fenderindustries.com
 EMAIL_MCP_BROKER_PUBLIC_KEY=
 ```
 
@@ -54,8 +54,8 @@ For direct local OAuth fallback, fill in the OAuth app values once for the provi
 For hosted broker mode, configure these redirect URIs in the provider OAuth apps:
 
 ```text
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/gmail/callback
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/outlook/callback
+https://auth.fenderindustries.com/auth/gmail/callback
+https://auth.fenderindustries.com/auth/outlook/callback
 ```
 
 For direct local OAuth fallback, configure this redirect URI in the OAuth app:

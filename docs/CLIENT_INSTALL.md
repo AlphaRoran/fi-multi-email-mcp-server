@@ -22,7 +22,7 @@ cp .env.example .env
 Preferred broker-based installs only need the broker URL and public key:
 
 ```bash
-EMAIL_MCP_AUTH_BASE_URL=https://auth.example.com
+EMAIL_MCP_AUTH_BASE_URL=https://auth.fenderindustries.com
 EMAIL_MCP_BROKER_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n"
 ```
 
@@ -31,7 +31,7 @@ No Google or Microsoft provider secrets are needed on the client machine.
 For the current Vercel broker, use:
 
 ```bash
-EMAIL_MCP_AUTH_BASE_URL=https://email-mcp-server-caleb-fender-s-projects.vercel.app
+EMAIL_MCP_AUTH_BASE_URL=https://auth.fenderindustries.com
 ```
 
 Direct local OAuth fallback can still use provider values:
@@ -102,8 +102,8 @@ The Google OAuth app is still in testing mode and the signed-in user is not an a
 For hosted broker installs, make sure the OAuth clients have these redirect URIs:
 
 ```text
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/gmail/callback
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/outlook/callback
+https://auth.fenderindustries.com/auth/gmail/callback
+https://auth.fenderindustries.com/auth/outlook/callback
 ```
 
 For direct local OAuth fallback, make sure the OAuth client has this redirect URI:

@@ -14,8 +14,8 @@ http://127.0.0.1:8741/oauth/callback
 Hosted broker OAuth uses public broker redirect URIs:
 
 ```text
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/gmail/callback
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/outlook/callback
+https://auth.fenderindustries.com/auth/gmail/callback
+https://auth.fenderindustries.com/auth/outlook/callback
 ```
 
 If using a custom domain later, replace the Vercel URL with the custom domain everywhere: Vercel `BROKER_PUBLIC_BASE_URL`, Google redirect URI, Microsoft redirect URI, and local client `EMAIL_MCP_AUTH_BASE_URL`.
@@ -69,7 +69,7 @@ http://127.0.0.1:8741/oauth/callback
 For hosted broker mode, add the broker callback instead:
 
 ```text
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/gmail/callback
+https://auth.fenderindustries.com/auth/gmail/callback
 ```
 
 6. For hosted broker mode, store the client ID and client secret only in the Vercel project environment. For direct local fallback, copy the client ID and client secret into `.env`:
@@ -131,7 +131,7 @@ http://127.0.0.1:8741/oauth/callback
 For hosted broker mode, add:
 
 ```text
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/outlook/callback
+https://auth.fenderindustries.com/auth/outlook/callback
 ```
 
 6. Enable public client/native flow if you are not using a client secret.

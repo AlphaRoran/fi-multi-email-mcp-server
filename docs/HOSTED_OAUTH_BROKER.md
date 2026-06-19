@@ -58,7 +58,7 @@ EMAIL_MCP_BROKER_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KE
 ## Broker Environment
 
 ```bash
-BROKER_PUBLIC_BASE_URL=https://email-mcp-server-caleb-fender-s-projects.vercel.app
+BROKER_PUBLIC_BASE_URL=https://auth.fenderindustries.com
 BROKER_PORT=8787
 BROKER_PRIVATE_KEY=
 
@@ -84,7 +84,7 @@ This repo includes Vercel serverless functions under `api/` and a `vercel.json` 
 On Vercel, set environment variables for Production and Preview:
 
 ```bash
-BROKER_PUBLIC_BASE_URL=https://email-mcp-server-caleb-fender-s-projects.vercel.app
+BROKER_PUBLIC_BASE_URL=https://auth.fenderindustries.com
 BROKER_PRIVATE_KEY=
 
 GOOGLE_CLIENT_ID=
@@ -112,7 +112,7 @@ npm run broker:dev
 ## Local MCP Client Environment
 
 ```bash
-EMAIL_MCP_AUTH_BASE_URL=https://email-mcp-server-caleb-fender-s-projects.vercel.app
+EMAIL_MCP_AUTH_BASE_URL=https://auth.fenderindustries.com
 EMAIL_MCP_BROKER_PUBLIC_KEY=
 EMAIL_MCP_OAUTH_HOST=127.0.0.1
 EMAIL_MCP_OAUTH_PORT=8741
@@ -127,13 +127,13 @@ When using the hosted broker, provider OAuth apps should point to the broker cal
 Google OAuth client authorized redirect URI:
 
 ```text
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/gmail/callback
+https://auth.fenderindustries.com/auth/gmail/callback
 ```
 
 Microsoft redirect URI:
 
 ```text
-https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/outlook/callback
+https://auth.fenderindustries.com/auth/outlook/callback
 ```
 
 The local callback remains:
@@ -147,7 +147,7 @@ but it is used only by the browser relay after the broker completes OAuth.
 ## Flow
 
 1. Agent calls `start_gmail_oauth` or `start_outlook_oauth`.
-2. Local MCP opens `https://email-mcp-server-caleb-fender-s-projects.vercel.app/auth/<provider>/start?...`.
+2. Local MCP opens `https://auth.fenderindustries.com/auth/<provider>/start?...`.
 3. Broker redirects to Google or Microsoft.
 4. User signs in and grants permissions.
 5. Provider redirects back to the broker.
