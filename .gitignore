@@ -7,3 +7,4 @@ api/**/*.d.ts
 !.env.example
 tokens.json
 *.log
+.vercel
