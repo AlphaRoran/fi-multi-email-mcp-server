@@ -299,25 +299,25 @@ export class EmailService {
 
     const token = await refreshOutlookToken(account, this.store);
     if (input.trash) {
-      await graphFetch(`/me/messages/${encodeURIComponent(input.messageId)}/move`, token, {
+      const moved = await graphFetch<GraphMessage>(`/me/messages/${encodeURIComponent(input.messageId)}/move`, token, {
         method: "POST",
         body: JSON.stringify({ destinationId: "deleteditems" })
       });
-      return { provider: account.provider, accountId: input.accountId, status: "moved_to_deleteditems" };
+      return { provider: account.provider, accountId: input.accountId, status: "moved_to_deleteditems", message: normalizeGraphMessage(moved) };
     }
     if (input.archive) {
-      await graphFetch(`/me/messages/${encodeURIComponent(input.messageId)}/move`, token, {
+      const moved = await graphFetch<GraphMessage>(`/me/messages/${encodeURIComponent(input.messageId)}/move`, token, {
         method: "POST",
         body: JSON.stringify({ destinationId: "archive" })
       });
-      return { provider: account.provider, accountId: input.accountId, status: "archived" };
+      return { provider: account.provider, accountId: input.accountId, status: "archived", message: normalizeGraphMessage(moved) };
     }
     if (input.moveToFolderId) {
-      await graphFetch(`/me/messages/${encodeURIComponent(input.messageId)}/move`, token, {
+      const moved = await graphFetch<GraphMessage>(`/me/messages/${encodeURIComponent(input.messageId)}/move`, token, {
         method: "POST",
         body: JSON.stringify({ destinationId: input.moveToFolderId })
       });
-      return { provider: account.provider, accountId: input.accountId, status: "moved" };
+      return { provider: account.provider, accountId: input.accountId, status: "moved", message: normalizeGraphMessage(moved) };
     }
     if (typeof input.markRead === "boolean") {
       const message = await graphFetch<GraphMessage>(`/me/messages/${encodeURIComponent(input.messageId)}`, token, {

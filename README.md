@@ -121,4 +121,5 @@ Outlook:
 - [Privacy policy draft](./docs/PRIVACY_POLICY_DRAFT.md)
 - [Demo video script](./docs/DEMO_VIDEO_SCRIPT.md)
 - [Gmail QA report](./docs/GMAIL_QA_REPORT.md)
+- [Outlook QA report](./docs/OUTLOOK_QA_REPORT.md)
 - [Security notes](./docs/SECURITY_NOTES.md)
