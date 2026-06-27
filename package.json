@@ -11,6 +11,8 @@
     "doctor": "tsx src/doctor.ts",
     "dev": "tsx src/server.ts",
     "mcp:stdio": "tsx src/server.ts",
+    "automation:bootstrap-labels": "tsx automation/scripts/bootstrap-labels.ts",
+    "automation:watchdog": "tsx automation/scripts/primary-watchdog.ts",
     "start": "tsx src/server.ts"
   },
   "dependencies": {

@@ -1,0 +1,44 @@
+{
+  "labels": [
+    {
+      "key": "needs_review",
+      "name": "Agent/Needs Review"
+    },
+    {
+      "key": "needs_reply",
+      "name": "Agent/Needs Reply"
+    },
+    {
+      "key": "client",
+      "name": "Agent/Client"
+    },
+    {
+      "key": "lead",
+      "name": "Agent/Lead"
+    },
+    {
+      "key": "billing",
+      "name": "Agent/Billing"
+    },
+    {
+      "key": "scheduling",
+      "name": "Agent/Scheduling"
+    },
+    {
+      "key": "waiting",
+      "name": "Agent/Waiting"
+    },
+    {
+      "key": "newsletter",
+      "name": "Agent/Newsletter"
+    },
+    {
+      "key": "low_priority",
+      "name": "Agent/Low Priority"
+    },
+    {
+      "key": "draft_reply",
+      "name": "Agent/Draft Reply"
+    }
+  ]
+}

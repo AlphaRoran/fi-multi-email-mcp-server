@@ -1,0 +1,22 @@
+{
+  "accounts": {
+    "gmail:owner@example.com": {
+      "lane": "owner",
+      "role": "owner-primary",
+      "priority": "high",
+      "notes": "Primary decision-maker inbox"
+    },
+    "gmail:sales@example.com": {
+      "lane": "sales",
+      "role": "sales",
+      "priority": "high",
+      "notes": "Sales, leads, proposals, and client opportunities"
+    },
+    "outlook:support@example.com": {
+      "lane": "support",
+      "role": "support",
+      "priority": "medium",
+      "notes": "Support or operations inbox"
+    }
+  }
+}

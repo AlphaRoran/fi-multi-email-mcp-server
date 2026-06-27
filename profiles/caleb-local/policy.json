@@ -1,0 +1,23 @@
+{
+  "mode": "dry-run",
+  "primaryWatchdog": {
+    "gmailQuery": "in:inbox category:primary newer_than:1d",
+    "outlookQuery": "isRead eq false",
+    "maxResultsPerAccount": 10
+  },
+  "safeAutomation": {
+    "allowAutoLabel": true,
+    "allowAutoMarkRead": false,
+    "allowAutoArchive": false,
+    "allowAutoTrash": false,
+    "allowAutoSend": false,
+    "allowAutoUnsubscribe": false
+  },
+  "notifyWhen": [
+    "needs_review",
+    "client",
+    "lead",
+    "billing",
+    "scheduling"
+  ]
+}

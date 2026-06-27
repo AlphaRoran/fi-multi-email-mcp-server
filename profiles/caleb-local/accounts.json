@@ -1,0 +1,34 @@
+{
+  "accounts": {
+    "gmail:contact@c2geo.com": {
+      "lane": "c2geo",
+      "role": "company",
+      "priority": "high",
+      "notes": "C2 GEO company inbox"
+    },
+    "gmail:caleb@fenderindustries.com": {
+      "lane": "fender-industries",
+      "role": "company",
+      "priority": "high",
+      "notes": "Fender Industries company inbox"
+    },
+    "gmail:fenderindustries@gmail.com": {
+      "lane": "personal",
+      "role": "legacy-subscription-catchall",
+      "priority": "low",
+      "notes": "Personal legacy mailbox and subscription catchall"
+    },
+    "gmail:calebefender@gmail.com": {
+      "lane": "personal",
+      "role": "newer-primary",
+      "priority": "high",
+      "notes": "Newer personal primary mailbox"
+    },
+    "outlook:calebefender@outlook.com": {
+      "lane": "personal",
+      "role": "outlook-personal",
+      "priority": "medium",
+      "notes": "Personal Outlook mailbox"
+    }
+  }
+}

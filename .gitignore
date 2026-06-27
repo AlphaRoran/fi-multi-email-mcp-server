@@ -8,3 +8,5 @@ api/**/*.d.ts
 tokens.json
 *.log
 .vercel
+automation/state/*.json
+profiles/**/state/*.json
