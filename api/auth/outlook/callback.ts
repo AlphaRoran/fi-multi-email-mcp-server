@@ -1,7 +1,7 @@
 import { createBrokerCallbackEnvelope, parseBrokerSessionState } from "../../../src/brokerProtocol.js";
 import { graphFetch } from "../../../src/oauth.js";
 
-const outlookScopes = ["offline_access", "User.Read", "Mail.ReadWrite", "Mail.Send"];
+const outlookScopes = ["openid", "profile", "email", "offline_access", "User.Read", "Mail.ReadWrite", "Mail.Send"];
 
 export default async function handler(
   req: { query: { code?: string | string[]; state?: string | string[] } },

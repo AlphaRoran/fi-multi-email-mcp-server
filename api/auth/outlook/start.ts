@@ -1,6 +1,6 @@
 import { parseBrokerSessionState } from "../../../src/brokerProtocol.js";
 
-const outlookScopes = ["offline_access", "User.Read", "Mail.ReadWrite", "Mail.Send"];
+const outlookScopes = ["openid", "profile", "email", "offline_access", "User.Read", "Mail.ReadWrite", "Mail.Send"];
 
 export default function handler(
   req: { query: { state?: string | string[] } },

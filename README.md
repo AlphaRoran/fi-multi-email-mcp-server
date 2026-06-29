@@ -139,6 +139,9 @@ Gmail:
 
 Outlook:
 
+- `openid`
+- `profile`
+- `email`
 - `offline_access`
 - `User.Read`
 - `Mail.ReadWrite`

@@ -18,7 +18,7 @@ const gmailScopes = [
   "https://www.googleapis.com/auth/userinfo.email"
 ];
 
-const outlookScopes = ["offline_access", "User.Read", "Mail.ReadWrite", "Mail.Send"];
+const outlookScopes = ["openid", "profile", "email", "offline_access", "User.Read", "Mail.ReadWrite", "Mail.Send"];
 
 const app = express();
 

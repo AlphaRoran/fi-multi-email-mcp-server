@@ -81,6 +81,24 @@ Restart the MCP host after registration if it does not immediately show the new 
 
 Call `start_gmail_oauth` again and choose a different Google account. Each connected account receives its own `accountId`.
 
+## Connect Outlook From Terminal
+
+On Windows PowerShell:
+
+```powershell
+npm run auth:outlook
+```
+
+Leave the terminal open until the browser says the account is connected.
+
+If the browser does not open, copy the printed `Auth URL` into the browser manually.
+
+Gmail can be connected the same way:
+
+```powershell
+npm run auth:gmail
+```
+
 ## Runtime Token Location
 
 Connected mailbox tokens are stored locally at:
@@ -110,6 +128,37 @@ For direct local OAuth fallback, make sure the OAuth client has this redirect UR
 
 ```text
 http://127.0.0.1:8741/oauth/callback
+```
+
+### Port 8741 is already in use
+
+This means an old OAuth callback/server process is still running.
+
+On Windows PowerShell:
+
+```powershell
+netstat -ano | findstr :8741
+taskkill /PID <PID_FROM_NETSTAT> /F
+```
+
+Then rerun:
+
+```powershell
+npm run auth:outlook
+```
+
+### Microsoft scope or consent error
+
+Confirm the Microsoft app registration allows the account type being used and has delegated permissions for:
+
+```text
+openid
+profile
+email
+offline_access
+User.Read
+Mail.ReadWrite
+Mail.Send
 ```
 
 ### MCP host cannot see the server
