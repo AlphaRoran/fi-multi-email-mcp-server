@@ -43,6 +43,36 @@ state/
 
 No current mode sends, deletes, unsubscribes, or broadly archives messages.
 
+## Inbox Operator
+
+Run the operator loop:
+
+```bash
+EMAIL_MCP_PROFILE=profiles/caleb-local npm run automation:operator
+```
+
+This scans the configured accounts, classifies new messages, writes notifiable items into:
+
+```text
+profiles/caleb-local/state/approval-queue.json
+```
+
+It also renders a human-readable digest at:
+
+```text
+profiles/caleb-local/state/inbox-digest.md
+```
+
+For a near-real-time inbox operator, run the command every 2-5 minutes with launchd, cron, or your host scheduler. True push notifications should be added later with Gmail Pub/Sub watches and Microsoft Graph change notification subscriptions.
+
+Manage queue items after review:
+
+```bash
+EMAIL_MCP_PROFILE=profiles/caleb-local npm run automation:queue -- "gmail:caleb@example.com:MESSAGE_ID" done
+```
+
+Allowed statuses are `open`, `approved`, `dismissed`, and `done`.
+
 ## Bootstrap Labels
 
 Before `label-only`, run:

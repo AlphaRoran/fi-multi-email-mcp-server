@@ -1,81 +1,14 @@
 import { callEmailMcpTool } from "../lib/mcpClient.js";
 import { loadProfile, readJson, writeJson, type AutomationProfile, type ProcessedState } from "../lib/profile.js";
+import { isNotifiable, upsertApprovalItems, type QueueUpsertInput } from "../lib/approvalQueue.js";
+import { classifyMessage, senderDisplay, type Classification, type EmailAccount, type EmailMessage } from "../lib/inboxClassifier.js";
 
-type Account = { id: string; provider: "gmail" | "outlook"; email: string };
-type Message = {
-  id: string;
-  threadId?: string;
-  subject?: string;
-  from?: string | { name?: string; address?: string };
-  to?: unknown;
-  date?: string;
-  receivedDateTime?: string;
-  snippet?: string;
-  bodyPreview?: string;
-};
-type SearchResponse = { accountId: string; provider: string; messages: Message[] };
+type SearchResponse = { accountId: string; provider: string; messages: EmailMessage[] };
 type LabelMapState = { accounts: Record<string, Record<string, string>>; updatedAt: string | null };
 
-type Classification = {
-  labelKeys: string[];
-  labelNames: string[];
-  reasons: string[];
-};
-
-function classify(message: Message, accountId: string, profile: AutomationProfile): Classification {
-  const text = [
-    message.subject,
-    typeof message.from === "string" ? message.from : message.from?.address,
-    message.snippet,
-    message.bodyPreview
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-  const account = profile.accounts.accounts[accountId];
-  const labelKeys: string[] = [];
-  const reasons: string[] = [];
-
-  if (account?.role === "company") {
-    labelKeys.push("client");
-    reasons.push("company inbox");
-  }
-  if (/invoice|receipt|payment|paid|bill|statement/.test(text)) {
-    labelKeys.push("billing");
-    reasons.push("money/billing keyword");
-  }
-  if (/schedule|meeting|calendar|call|zoom|meet|appointment/.test(text)) {
-    labelKeys.push("scheduling");
-    reasons.push("scheduling keyword");
-  }
-  if (/lead|quote|proposal|interested|website|services|consult/.test(text)) {
-    labelKeys.push("lead");
-    reasons.push("lead/opportunity keyword");
-  }
-  if (/unsubscribe|newsletter|digest|promotion|sale|discount/.test(text)) {
-    labelKeys.push("newsletter");
-    reasons.push("newsletter/subscription keyword");
-  }
-  if (/[?]|can you|could you|please|urgent|asap|action required/.test(text)) {
-    labelKeys.push("needs_review");
-    reasons.push("direct ask or urgency signal");
-  }
-  if (labelKeys.length === 0) {
-    labelKeys.push(account?.priority === "low" ? "low_priority" : "review_later");
-    reasons.push("no strong rule matched");
-  }
-
-  const uniqueKeys = [...new Set(labelKeys)];
-  return {
-    labelKeys: uniqueKeys,
-    labelNames: uniqueKeys.map((key) => labelNameForKey(profile, key)),
-    reasons
-  };
-}
-
 async function maybeApplyLabels(
-  account: Account,
-  message: Message,
+  account: EmailAccount,
+  message: EmailMessage,
   classification: Classification,
   profile: AutomationProfile,
   labelMap: LabelMapState
@@ -109,26 +42,13 @@ async function maybeApplyLabels(
   return { applied: true, categories: classification.labelNames };
 }
 
-function labelNameForKey(profile: AutomationProfile, key: string): string {
-  return profile.labels.labels.find((label) => label.key === key)?.name || key;
-}
-
-function senderDisplay(from: Message["from"]): string {
-  if (!from) {
-    return "(unknown sender)";
-  }
-  if (typeof from === "string") {
-    return from;
-  }
-  return from.address || from.name || "(unknown sender)";
-}
-
 const profile = await loadProfile();
 const state = await readJson<ProcessedState>(profile.statePaths.processed);
 const labelMap = await readJson<LabelMapState>(profile.statePaths.labelMap);
-const accounts = await callEmailMcpTool<Account[]>("list_accounts");
+const accounts = await callEmailMcpTool<EmailAccount[]>("list_accounts");
 const configuredAccounts = accounts.filter((account) => profile.accounts.accounts[account.id]);
 const report = [];
+const queueInputs: QueueUpsertInput[] = [];
 
 for (const account of configuredAccounts) {
   const query = account.provider === "gmail" ? profile.policy.primaryWatchdog.gmailQuery : profile.policy.primaryWatchdog.outlookQuery;
@@ -145,8 +65,9 @@ for (const account of configuredAccounts) {
     const classified = [];
 
     for (const message of newMessages) {
-      const classification = classify(message, account.id, profile);
+      const classification = classifyMessage(message, account.id, profile);
       const action = await maybeApplyLabels(account, message, classification, profile, labelMap);
+      queueInputs.push({ account, message, classification, profile, attention: isNotifiable(classification, profile) });
       classified.push({
         id: message.id,
         subject: message.subject || "(no subject)",
@@ -186,4 +107,5 @@ for (const account of configuredAccounts) {
 
 state.lastRunAt = new Date().toISOString();
 await writeJson(profile.statePaths.processed, state);
-console.log(JSON.stringify({ mode: profile.policy.mode, profile: profile.profileDir, report }, null, 2));
+const approvalQueue = await upsertApprovalItems(profile, queueInputs);
+console.log(JSON.stringify({ mode: profile.policy.mode, profile: profile.profileDir, queued: queueInputs.length, attentionQueued: queueInputs.filter((item) => item.attention).length, approvalQueueOpen: approvalQueue.items.filter((item) => item.status === "open").length, report }, null, 2));

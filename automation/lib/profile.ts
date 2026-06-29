@@ -52,8 +52,31 @@ export type LabelMapState = {
 };
 
 export type ApprovalQueueState = {
-  items: unknown[];
+  items: ApprovalQueueItem[];
   updatedAt: string | null;
+};
+
+export type ApprovalQueueItem = {
+  key: string;
+  status: "open" | "approved" | "dismissed" | "done";
+  accountId: string;
+  provider: "gmail" | "outlook";
+  lane: string;
+  accountPriority: string;
+  messageId: string;
+  threadId?: string;
+  subject: string;
+  from: string;
+  receivedAt?: string;
+  snippet: string;
+  labelKeys: string[];
+  labelNames: string[];
+  reasons: string[];
+  suggestedActions: string[];
+  importance: "high" | "medium" | "low";
+  attention: boolean;
+  firstSeenAt: string;
+  lastSeenAt: string;
 };
 
 export type AutomationProfile = {

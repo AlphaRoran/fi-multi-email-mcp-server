@@ -12,6 +12,9 @@
     "dev": "tsx src/server.ts",
     "mcp:stdio": "tsx src/server.ts",
     "automation:bootstrap-labels": "tsx automation/scripts/bootstrap-labels.ts",
+    "automation:digest": "tsx automation/scripts/inbox-digest.ts",
+    "automation:operator": "tsx automation/scripts/inbox-operator.ts",
+    "automation:queue": "tsx automation/scripts/queue-action.ts",
     "automation:watchdog": "tsx automation/scripts/primary-watchdog.ts",
     "start": "tsx src/server.ts"
   },

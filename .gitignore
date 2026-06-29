@@ -10,3 +10,4 @@ tokens.json
 .vercel
 automation/state/*.json
 profiles/**/state/*.json
+profiles/**/state/*

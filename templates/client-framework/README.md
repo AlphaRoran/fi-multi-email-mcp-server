@@ -34,3 +34,11 @@ EMAIL_MCP_PROFILE=profiles/clients/<client-slug> npx tsx automation/scripts/boot
 ```
 
 Then switch to `label-only` only when the client approves label behavior.
+
+For the daily operator loop:
+
+```bash
+EMAIL_MCP_PROFILE=profiles/clients/<client-slug> npm run automation:operator
+```
+
+This writes an approval queue and inbox digest under that profile's `state/` folder. It is safe by default: no sending, deleting, archiving, unsubscribing, or marking read unless future policy modes explicitly allow it.
