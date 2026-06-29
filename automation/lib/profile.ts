@@ -17,6 +17,7 @@ export type AutomationMode = "dry-run" | "label-only" | "assistive" | "managed";
 export type Policy = {
   mode: AutomationMode;
   client?: ClientProfileSettings;
+  projectContext?: ProjectContextPolicy;
   primaryWatchdog: {
     gmailQuery: string;
     outlookQuery: string;
@@ -31,6 +32,14 @@ export type Policy = {
     allowAutoUnsubscribe: boolean;
   };
   notifyWhen: string[];
+};
+
+export type ProjectContextPolicy = {
+  enabled: boolean;
+  destination: "state-file" | "notion" | "linear" | "asana" | "clickup" | "google-sheets" | string;
+  requireApprovalBeforeExternalWrite: boolean;
+  captureWhen: string[];
+  defaultProjectStatus: "candidate" | "active" | "waiting" | string;
 };
 
 export type ClientProfileSettings = {
@@ -97,6 +106,35 @@ export type ApprovalQueueItem = {
   lastSeenAt: string;
 };
 
+export type ProjectContextState = {
+  items: ProjectContextItem[];
+  updatedAt: string | null;
+};
+
+export type ProjectContextItem = {
+  key: string;
+  status: "candidate" | "approved" | "imported" | "dismissed";
+  accountId: string;
+  lane: string;
+  messageId: string;
+  threadId?: string;
+  sourceSubject: string;
+  sourceFrom: string;
+  sourceReceivedAt?: string;
+  projectTitle: string;
+  projectKey: string;
+  contextSummary: string;
+  planCandidate: {
+    goal: string;
+    nextActions: string[];
+    openQuestions: string[];
+    risks: string[];
+  };
+  labelKeys: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type AutomationProfile = {
   profileDir: string;
   accounts: AccountsConfig;
@@ -106,6 +144,7 @@ export type AutomationProfile = {
     processed: string;
     labelMap: string;
     approvalQueue: string;
+    projectContext: string;
   };
 };
 
@@ -119,12 +158,14 @@ export async function loadProfile(): Promise<AutomationProfile> {
   const statePaths = {
     processed: resolve(stateDir, "processed.json"),
     labelMap: resolve(stateDir, "label-map.json"),
-    approvalQueue: resolve(stateDir, "approval-queue.json")
+    approvalQueue: resolve(stateDir, "approval-queue.json"),
+    projectContext: resolve(stateDir, "project-context.json")
   };
 
   await ensureJson(statePaths.processed, { processed: {}, lastRunAt: null });
   await ensureJson(statePaths.labelMap, { accounts: {}, updatedAt: null });
   await ensureJson(statePaths.approvalQueue, { items: [], updatedAt: null });
+  await ensureJson(statePaths.projectContext, { items: [], updatedAt: null });
 
   return {
     profileDir,

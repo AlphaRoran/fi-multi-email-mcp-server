@@ -110,6 +110,13 @@ async function createProfile(setup: SetupInput): Promise<void> {
       },
       notes: setup.notes || ""
     },
+    projectContext: {
+      enabled: true,
+      destination: "state-file",
+      requireApprovalBeforeExternalWrite: true,
+      captureWhen: ["needs_review", "needs_reply", "client", "lead", "billing", "scheduling"],
+      defaultProjectStatus: "candidate"
+    },
     primaryWatchdog: {
       gmailQuery: "in:inbox newer_than:1d",
       outlookQuery: "isRead eq false",

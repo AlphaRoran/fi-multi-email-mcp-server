@@ -2,6 +2,7 @@ import { callEmailMcpTool } from "../lib/mcpClient.js";
 import { loadProfile, readJson, writeJson, type AutomationProfile, type ProcessedState } from "../lib/profile.js";
 import { isNotifiable, upsertApprovalItems, type QueueUpsertInput } from "../lib/approvalQueue.js";
 import { classifyMessage, senderDisplay, type Classification, type EmailAccount, type EmailMessage } from "../lib/inboxClassifier.js";
+import { shouldCaptureProjectContext, upsertProjectContextItems, type ProjectContextInput } from "../lib/projectContext.js";
 
 type SearchResponse = { accountId: string; provider: string; messages: EmailMessage[] };
 type LabelMapState = { accounts: Record<string, Record<string, string>>; updatedAt: string | null };
@@ -49,6 +50,7 @@ const accounts = await callEmailMcpTool<EmailAccount[]>("list_accounts");
 const configuredAccounts = accounts.filter((account) => profile.accounts.accounts[account.id]);
 const report = [];
 const queueInputs: QueueUpsertInput[] = [];
+const projectContextInputs: ProjectContextInput[] = [];
 
 for (const account of configuredAccounts) {
   const query = account.provider === "gmail" ? profile.policy.primaryWatchdog.gmailQuery : profile.policy.primaryWatchdog.outlookQuery;
@@ -68,6 +70,10 @@ for (const account of configuredAccounts) {
       const classification = classifyMessage(message, account.id, profile);
       const action = await maybeApplyLabels(account, message, classification, profile, labelMap);
       queueInputs.push({ account, message, classification, profile, attention: isNotifiable(classification, profile) });
+      const projectContextInput = { account, message, classification, profile };
+      if (shouldCaptureProjectContext(projectContextInput)) {
+        projectContextInputs.push(projectContextInput);
+      }
       classified.push({
         id: message.id,
         subject: message.subject || "(no subject)",
@@ -108,4 +114,5 @@ for (const account of configuredAccounts) {
 state.lastRunAt = new Date().toISOString();
 await writeJson(profile.statePaths.processed, state);
 const approvalQueue = await upsertApprovalItems(profile, queueInputs);
-console.log(JSON.stringify({ mode: profile.policy.mode, profile: profile.profileDir, queued: queueInputs.length, attentionQueued: queueInputs.filter((item) => item.attention).length, approvalQueueOpen: approvalQueue.items.filter((item) => item.status === "open").length, report }, null, 2));
+const projectContext = await upsertProjectContextItems(profile, projectContextInputs);
+console.log(JSON.stringify({ mode: profile.policy.mode, profile: profile.profileDir, queued: queueInputs.length, attentionQueued: queueInputs.filter((item) => item.attention).length, approvalQueueOpen: approvalQueue.items.filter((item) => item.status === "open").length, projectContextCandidates: projectContext.items.filter((item) => item.status === "candidate").length, report }, null, 2));

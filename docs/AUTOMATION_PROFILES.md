@@ -63,6 +63,14 @@ It also renders a human-readable digest at:
 profiles/caleb-local/state/inbox-digest.md
 ```
 
+Important messages can also create project-context candidates at:
+
+```text
+profiles/caleb-local/state/project-context.json
+```
+
+These candidates include source email context, inferred project title, goal, next actions, open questions, and risks. They are local-only until an approved external writer is configured for the profile's project system.
+
 For a near-real-time inbox operator, run the command every 2-5 minutes with launchd, cron, or your host scheduler. True push notifications should be added later with Gmail Pub/Sub watches and Microsoft Graph change notification subscriptions.
 
 Manage queue items after review:
@@ -72,6 +80,14 @@ EMAIL_MCP_PROFILE=profiles/caleb-local npm run automation:queue -- "gmail:caleb@
 ```
 
 Allowed statuses are `open`, `approved`, `dismissed`, and `done`.
+
+Manage project-context candidates after review:
+
+```bash
+EMAIL_MCP_PROFILE=profiles/caleb-local npm run automation:project -- "gmail:caleb@example.com:THREAD_OR_MESSAGE_ID" approved
+```
+
+Allowed statuses are `candidate`, `approved`, `imported`, and `dismissed`.
 
 ## Bootstrap Labels
 

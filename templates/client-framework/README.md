@@ -48,3 +48,11 @@ EMAIL_MCP_PROFILE=profiles/clients/<client-slug> npm run automation:operator
 ```
 
 This writes an approval queue and inbox digest under that profile's `state/` folder. It is safe by default: no sending, deleting, archiving, unsubscribing, or marking read unless future policy modes explicitly allow it.
+
+The operator also writes project-context candidates to:
+
+```text
+profiles/clients/<client-slug>/state/project-context.json
+```
+
+Use these candidates to review which emails should become projects, tasks, reply plans, or client follow-ups before writing into the client's actual project system.
