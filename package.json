@@ -6,6 +6,8 @@
   "description": "MCP server for managing multiple Gmail and Outlook accounts from one agent-facing interface.",
   "scripts": {
     "build": "tsc",
+    "auth:gmail": "tsx src/authCli.ts gmail",
+    "auth:outlook": "tsx src/authCli.ts outlook",
     "broker:dev": "tsx src/broker.ts",
     "broker:start": "node dist/broker.js",
     "doctor": "tsx src/doctor.ts",

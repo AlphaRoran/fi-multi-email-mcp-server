@@ -114,6 +114,21 @@ The auth tools also return `authUrl`, `redirectUri`, `state`, `scopes`, and `ope
 }
 ```
 
+For terminal-based setup, run:
+
+```bash
+npm run auth:gmail
+npm run auth:outlook
+```
+
+On Windows PowerShell:
+
+```powershell
+npm run auth:outlook
+```
+
+Leave the terminal open until the browser success page says the account is connected.
+
 ## Provider Scopes
 
 Gmail:

@@ -345,12 +345,31 @@ async function openBrowserIfRequested(url: string, openBrowser = true): Promise<
     return false;
   }
 
-  const command =
-    process.platform === "darwin" ? "open" : process.platform === "win32" ? "cmd" : "xdg-open";
-  const args = process.platform === "win32" ? ["/c", "start", "", url] : [url];
+  const command = process.platform === "darwin" ? "open" : process.platform === "win32" ? "powershell.exe" : "xdg-open";
+  const args =
+    process.platform === "win32"
+      ? ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "Start-Process -FilePath $args[0]", url]
+      : [url];
 
   try {
     const child = spawn(command, args, {
+      detached: true,
+      stdio: "ignore"
+    });
+    child.unref();
+    return true;
+  } catch {
+    if (process.platform !== "win32") {
+      return false;
+    }
+    return openWindowsBrowserWithCmd(url);
+  }
+}
+
+function openWindowsBrowserWithCmd(url: string): boolean {
+  try {
+    const escapedUrl = url.replaceAll("&", "^&");
+    const child = spawn("cmd", ["/c", "start", "\"\"", escapedUrl], {
       detached: true,
       stdio: "ignore"
     });
