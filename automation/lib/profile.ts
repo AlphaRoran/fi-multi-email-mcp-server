@@ -16,6 +16,7 @@ export type AutomationMode = "dry-run" | "label-only" | "assistive" | "managed";
 
 export type Policy = {
   mode: AutomationMode;
+  client?: ClientProfileSettings;
   primaryWatchdog: {
     gmailQuery: string;
     outlookQuery: string;
@@ -30,6 +31,23 @@ export type Policy = {
     allowAutoUnsubscribe: boolean;
   };
   notifyWhen: string[];
+};
+
+export type ClientProfileSettings = {
+  clientName: string;
+  clientSlug: string;
+  operatingStyle: "hands-off" | "balanced" | "high-touch" | string;
+  projectSystem: string;
+  notificationPreference: "digest-only" | "attention-only" | "all-new-mail" | string;
+  checkCadenceMinutes: number;
+  escalationChannels: string[];
+  approvalRules: {
+    requireApprovalBeforeSend: boolean;
+    requireApprovalBeforeArchive: boolean;
+    requireApprovalBeforeDelete: boolean;
+    requireApprovalBeforeUnsubscribe: boolean;
+  };
+  notes?: string;
 };
 
 export type LabelDefinition = {

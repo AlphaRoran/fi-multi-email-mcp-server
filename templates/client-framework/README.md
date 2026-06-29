@@ -18,6 +18,12 @@ labels.default.json -> labels.json
 
 Then update `accounts.json` with actual account IDs returned by the MCP `list_accounts` tool.
 
+You can also generate the profile with the setup wizard:
+
+```bash
+npm run automation:setup-client
+```
+
 Default behavior is intentionally conservative:
 
 - `mode`: `dry-run`

@@ -15,6 +15,7 @@
     "automation:digest": "tsx automation/scripts/inbox-digest.ts",
     "automation:operator": "tsx automation/scripts/inbox-operator.ts",
     "automation:queue": "tsx automation/scripts/queue-action.ts",
+    "automation:setup-client": "tsx automation/scripts/setup-client-profile.ts",
     "automation:watchdog": "tsx automation/scripts/primary-watchdog.ts",
     "start": "tsx src/server.ts"
   },

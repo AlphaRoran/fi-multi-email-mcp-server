@@ -1,5 +1,23 @@
 {
   "mode": "dry-run",
+  "client": {
+    "clientName": "Example Client",
+    "clientSlug": "example-client",
+    "operatingStyle": "balanced",
+    "projectSystem": "Notion",
+    "notificationPreference": "attention-only",
+    "checkCadenceMinutes": 5,
+    "escalationChannels": [
+      "digest"
+    ],
+    "approvalRules": {
+      "requireApprovalBeforeSend": true,
+      "requireApprovalBeforeArchive": true,
+      "requireApprovalBeforeDelete": true,
+      "requireApprovalBeforeUnsubscribe": true
+    },
+    "notes": "Client-specific operating instructions go here."
+  },
   "primaryWatchdog": {
     "gmailQuery": "in:inbox newer_than:1d",
     "outlookQuery": "isRead eq false",
